@@ -58,6 +58,9 @@ Create appropriate record sets for routing traffic to the Load Balancer.
 ###### Create an AMI once the website is initialized for future deployments.
 #### For detailed deployment steps and scripts, please refer to the repository files.
 
+#### Reference Architecture
+<img src="4.WordPress_SG (1).jpg">
+
 ###### Contributors
 
 #### Charles Sangi/Devops Team
