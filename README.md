@@ -1,107 +1,61 @@
-Dynamic E-Commerce Web App Deployment on AWS.
+#DevOps Project: 
+#Dynamic E-Commerce Web App Deployment on AWS
+This repository contains scripts and a reference diagram for deploying a dynamic E-Commerce web application on Amazon Web Services (AWS). The project utilizes various AWS services and follows best practices for security, scalability, and fault tolerance.
 
-This repository contains scripts and diagrams for deploying a dynamic E-Commerce web application on AWS. The project utilizes various AWS services and configurations to ensure high availability, fault tolerance, and scalability of the application.
+#Architecture Overview
+The deployment architecture includes the following components:
 
-Architecture Overview
+VPC Configuration: Configured with public and private subnets across two availability zones for high availability and fault tolerance.
+Internet Gateway: Allows communication between instances in the VPC and the internet.
+Security Groups: Utilized for firewall configurations for EC2 instances to control inbound and outbound traffic.
+NAT Gateway: Enables instances in private subnets to access the internet while remaining protected.
+Bastion Host: Provides secure SSH access to instances in private subnets.
+Load Balancer: Distributes web traffic across multiple EC2 instances in different availability zones.
+Elastic File System (EFS): Facilitates file sharing across availability zones for EC2 instances.
+MySQL RDS Database: Managed relational database service for storing application data.
+Flyway: Used for database migration.
+Autoscaling Group: Dynamically creates EC2 instances to ensure high availability, scalability, fault tolerance, and elasticity of the web application.
+Route 53: Manages domain registration and DNS routing.
+AWS S3: Stores web files for the application.
+IAM Role: Grants EC2 instances permission to download web files from S3.
 
-The architecture of the deployed solution includes the following components:
+#Deployment Steps
+Clone the Repository: Clone this repository to your local machine to access deployment scripts and reference diagrams.
 
-Virtual Private Cloud (VPC) with public and private subnets across two availability zones.
-Internet Gateway for communication between instances in the VPC and the internet.
-Network Address Translation (NAT) Gateway for instances in private subnets to access the internet.
-Bastion Host for secure SSH access to instances in private subnets.
-Elastic File System (EFS) for sharing files across availability zones.
-MySQL RDS database for data storage.
-Application Load Balancer (ALB) to distribute web traffic across multiple EC2 instances.
-Auto Scaling Group to dynamically create and manage EC2 instances based on traffic demand.
-Route 53 for domain registration and DNS routing.
-AWS S3 to store web files.
-IAM Role for EC2 instances to access files stored in S3.
+#Set Up AWS Environment:
 
+Create a VPC with public and private subnets across multiple availability zones.
+Configure internet gateway, NAT gateway, and security groups for EC2 instances.
+Set up a Bastion Host for secure access to instances in private subnets.
+Configure Elastic File System (EFS) for file sharing.
+Create an RDS instance for the MySQL database.
 
-Deployment Scripts.
+Deploy EC2 Instances:
 
-Startup Server Deployment Script
+#Launch EC2 instances in private subnets for web servers.
+Configure IAM role to grant EC2 instances access to S3.
+Database Setup:
 
-The following script is used to launch the startup server:
+#Set up MySQL database using RDS.
+Use Flyway for database migration.
+Configure Load Balancer:
 
-bash
+#Set up Application Load Balancer to distribute web traffic.
+Configure Autoscaling Group for EC2 instances to ensure scalability and fault tolerance.
+Domain Registration and DNS Routing:
 
-# Update packages and create html directory
-sudo su
-yum update -y
-mkdir -p /var/www/html
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-03c9b3354880b36a6.efs.us-east-1.amazonaws.com:/ /var/www/html
+#Register domain name using Route 53.
+Create appropriate record sets for routing traffic to the Load Balancer.
+Store Web Files in S3:
 
-# Install Apache
-sudo yum install -y httpd httpd-tools mod_ssl
-sudo systemctl enable httpd 
-sudo systemctl start httpd
+Upload web files to AWS S3 bucket for storage.
 
-# Install PHP 7.4
-sudo amazon-linux-extras enable php7.4
-sudo yum clean metadata
-sudo yum install php php-common php-pear -y
-sudo yum install php-{cgi,curl,mbstring,gd,mysqlnd,gettext,json,xml,fpm,intl,zip} -y
+#Final Steps:
 
-# Install MySQL 5.7
-sudo rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
-sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-sudo yum install mysql-community-server -y
-sudo systemctl enable mysqld
-sudo systemctl start mysqld
+Initiate the website on EC2 instances.
+Create an AMI once the website is initialized for future deployments.
 
-# Set permissions
-sudo usermod -a -G apache ec2-user
-sudo chown -R ec2-user:apache /var/www
-sudo chmod 2775 /var/www && find /var/www -type d -exec sudo chmod 2775 {} \;
-sudo find /var/www -type f -exec sudo chmod 0664 {} \;
-chown apache:apache -R /var/www/html 
+For detailed deployment steps and scripts, please refer to the repository files.
 
-# Download WordPress files
-wget https://wordpress.org/latest.tar.gz
-tar -xzf latest.tar.gz
-cp -r wordpress/* /var/www/html/
-
-# Create wp-config.php file
-cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-
-# Edit wp-config.php file (Update Database details)
-
-# Restart the webserver
-service httpd restart
-Application Server Installation Script
-The following script installs WordPress on the application server:
-
-bash
-Copy code
-#!/bin/bash
-yum update -y
-sudo yum install -y httpd httpd-tools mod_ssl
-sudo systemctl enable httpd 
-sudo systemctl start httpd
-sudo amazon-linux-extras enable php7.4
-sudo yum clean metadata
-sudo yum install php php-common php-pear -y
-sudo yum install php-{cgi,curl,mbstring,gd,mysqlnd,gettext,json,xml,fpm,intl,zip} -y
-sudo rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
-sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-sudo yum install mysql-community-server -y
-sudo systemctl enable mysqld
-sudo systemctl start mysqld
-echo "fs-03c9b3354880b36a6.efs.us-east-1.amazonaws.com:/ /var/www/html nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0" >> /etc/fstab
-mount -a
-chown apache:apache -R /var/www/html
-sudo service httpd restart
-Diagram
-The reference diagram for the project is available in the repository.
-
-For any questions or issues, please contact [maintainer's email/contact].
-
-Feel free to enhance the README with more details on configuration, dependencies, and troubleshooting steps. Adjust the template according to your specific project needs.
-
-
-
-
-
-
+Contributors
+[Charles Sangi/Devops Team]
