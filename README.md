@@ -1,7 +1,9 @@
-Dynamic E-Commerce Web App Deployment on AWS
+Dynamic E-Commerce Web App Deployment on AWS.
+
 This repository contains scripts and diagrams for deploying a dynamic E-Commerce web application on AWS. The project utilizes various AWS services and configurations to ensure high availability, fault tolerance, and scalability of the application.
 
 Architecture Overview
+
 The architecture of the deployed solution includes the following components:
 
 Virtual Private Cloud (VPC) with public and private subnets across two availability zones.
